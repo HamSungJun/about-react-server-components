@@ -1,38 +1,52 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# React Server Components
 
-## Getting Started
+- 전통적인 Fetch -> Render 방식의 문제점
+  - 부모 컴포넌트 P1 에서 필요한 데이터를 Fetch
+    - Fetch 이후 부모 컴포넌트는 렌더링에 성공, 자식 컴포넌트 C1을 렌더링 하기 위한 데이터를 Fetch
+      - Fetch 이후 자식 컴포넌트 C1은 렌더링에 성공, ... 반복
+        - 결과적으로 React Component Tree를 모두 렌더링하기 위해 Waterfall Rendering Model이 발생한다.
 
-First, run the development server:
+위의 문제점을 개선하기 위해 GraphQL과 같은 솔루션으로 한번의 네트워크 라운드 트립에 특정 컴포넌트 트리를 렌더링 하기 위한 데이터를 모두 가져오는 대안을 선택할 수 있었다. 그러나 부모 컴포넌트 하위의 자식 컴포넌트의 독립성은 저해될 수 있다.  
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+그렇다면 모든 프로젝트에 GraphQL 솔루션을 반드시 적용해야만 하는가?
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- 사소한 프로젝트에도 반드시 GraphQL을 넣어야만 할까?
+- GraphQL은 Waterfall Rendering 문제에 대한 하나의 기술이지 리액트 어플리케이션과 반드시 커플링되어야 하는 요소는 아니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+생각을 달리 해보자.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+클라이언트 사이드에서 네트워크 요청이 동반되는 컴포넌트를 렌더링을 할때 Waterfall 문제를 겪는다.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- 만약 서버에서 컴포넌트를 렌더링 한다음 클라이언트로 응답할 수 있다면?
+  - 서버상에서만 실행 및 렌더링되고 클라이언트로 Hydration을 위한 스크립트를 전송해줄 필요가 없게 된다면?
+    - 클라이언트로 응답하는 페이로드가 적어진다.
+  - 서버에서 컴포넌트를 렌더링할때만 필요한 벤더 모듈이 있다면?
+    - 클라이언트로 응답하는 번들 스크립트에 불필요한 벤더 모듈이 포함되지 않게되어 클라이언트로 응답하는 페이로드가 적어진다.
+  - 서버상에서만 컴포넌트가 실행된다면 서버와 연결된 데이터베이스를 직접 호출 할 수도 있다. 이것은 상대적으로 긴 레이턴시가 발생하는 클라이언트에서 데이터베이스를 호출하는 것보다 짧은 지연시간을 갖는다. (이 부분은 개인적으로 Waterfall 이슈에 대한 개선 포인트이라고 생각하며 완전한 해결책은 아닌 것 같다.)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+정리하면
 
-## Learn More
+- React Server Components 기술은 React SSR 기술과 서로 상호 보완적인 역할을 한다.
+- React Server Components 를 통해 Server Only 컴포넌트를 사용하면 클라이언트 번들 자바스크립트에 포함되지 않는다.
+- 상태와 상호작용이 필요하지 않은 컴포넌트는 Server Only 컴포넌트로 지정한다.
+- 상태와 상호작용이 필요한 컴포넌트는 Client Only 컴포넌트로 지정한다.
+- Server & Client 양쪽에서 모두 사용될 컴포넌트는 Shared 컴포넌트로 지정한다.
 
-To learn more about Next.js, take a look at the following resources:
+주관적인 의견은
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 검색엔진 최적화, 빠른 FCP, LCP가 필요없는 내부 솔루션은 여전히 CSR을 적용이 여전히 좋은 선택이다.
+- 검색엔진 최적화, 빠른 FCP, LCP가 필요한 쇼핑몰, 콘텐츠 플랫폼, 모바일을 대응하는 솔루션은 SSR 적용을 고려할만 하다.
+- React Server Components 가 SSR, CSR을 초월하는 만병통치약이 아니다. 그러나 SSR 환경에서 클라이언트로 전달되는 페이로드의 용량을 개선하는 부분, 네트워크 레이턴시를 단축시키는 부분은 주목할 만 하다.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+React Server Components 기술은 Next.js 13 버전에서 적용되어 소개되고 있는 것으로 보인다.
 
-## Deploy on Vercel
+잘 정제된 프레임워크를 통해 경험해보자.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### References
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- https://ko.reactjs.org/blog/2020/12/21/data-fetching-with-react-server-components.html
+- https://nextjs.org/docs/advanced-features/react-18/server-components
+- https://beta.nextjs.org/docs/getting-started
+- https://tech.kakaopay.com/post/react-server-components/
+- https://yceffort.kr/2022/01/how-react-server-components-work
+- https://patterns-dev-kr.github.io/rendering-patterns/react-server-components/
