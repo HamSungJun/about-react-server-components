@@ -1,5 +1,7 @@
 # React Server Components
 
+[2023-01-31]
+
 - 전통적인 Fetch -> Render 방식의 문제점
   - 부모 컴포넌트 P1 에서 필요한 데이터를 Fetch
     - Fetch 이후 부모 컴포넌트는 렌더링에 성공, 자식 컴포넌트 C1을 렌더링 하기 위한 데이터를 Fetch
@@ -42,6 +44,21 @@ React Server Components 기술은 Next.js 13 버전에서 적용되어 소개되
 
 잘 정제된 프레임워크를 통해 경험해보자.
 
+[2023-02-01]
+
+React Server Components, 앞으로는 RSC라고 하자. Nextjs 13 베타버전의 공식 문서를 참고하면 `app` 디렉토리 하위에 작성하는 컴포넌트는 프레임워크에 의해 기본적으로 Server Component 로 취급이 된다.
+
+나는 간단한 블로그 어플리케이션을 만들어볼 것이며 기본적으로 모두 Client Component로 처리한다음 Server Component로 이전하는 작업을 진행해 볼 것이다. 이렇게 작업을 해보는 이유는 Client Component 하나씩 Server Component로 전환하면서
+
+클라이언트로 전송되는 번들 스크립트 사이즈와 FCP, LCP가 어떻게 변화하는지 관찰하기가 용이할 것이라 판단했다.
+
+```
+- 블로그
+    - 홈
+    - 게시글 작성 페이지
+    - 게시글 수정 페이지
+    - 게시글 상세 페이지
+```
 ### References
 
 - https://ko.reactjs.org/blog/2020/12/21/data-fetching-with-react-server-components.html

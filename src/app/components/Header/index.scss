@@ -1,0 +1,34 @@
+.header {
+  height: 60px;
+  padding: 0 20px;
+  display: flex;
+  border-bottom: 1x solid #ccc;
+  background-color: #1e293b;
+}
+.header__brand-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: white;
+}
+.header__nav-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  .nav-list {
+    list-style-type: none;
+    .nav-link {
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .pencil-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
