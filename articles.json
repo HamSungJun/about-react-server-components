@@ -1,14 +1,1 @@
-{
-  "articles": [
-    {
-      "id": "6dc2e23b-ce20-4a17-92bb-34b208e7b6dc",
-      "title": "123",
-      "content": "123"
-    },
-    {
-      "id": "8635f6f3-86bb-4496-a101-bc166d499353",
-      "title": "252525",
-      "content": "25252525"
-    }
-  ]
-}
+{"articles":[{"id":"68b0a958-72ad-4f05-a994-4dbf742bf864","title":"과자 쿠키 초콜릿","content":"바나나 우당탕 짜장면","createdAt":1675348523000},{"id":"6cfa2a8d-fc5f-483b-a6b7-ba1a419f7d99","title":"gasga","content":"agsgasg","createdAt":1675348513000}]}

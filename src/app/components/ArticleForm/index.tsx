@@ -1,9 +1,10 @@
+"use client";
+
 import { ChangeEventHandler } from "react";
 import "@/app/components/ArticleForm/index.scss";
+import type { Article } from "@/app";
 
-interface Props {
-  title?: string;
-  content?: string;
+interface Props extends Partial<Pick<Article, "title" | "content">> {
   onChangeTitle?: ChangeEventHandler<HTMLInputElement>;
   onChangeContent?: ChangeEventHandler<HTMLTextAreaElement>;
 }

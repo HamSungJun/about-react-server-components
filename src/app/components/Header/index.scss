@@ -9,9 +9,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 1.3rem;
-  color: white;
+  .nav-link {
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: white;
+  }
 }
 .header__nav-box {
   display: flex;

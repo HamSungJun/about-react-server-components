@@ -4,7 +4,7 @@ import { ChangeEventHandler, useState } from "react";
 import ArticleWriteForm from "@/app/components/ArticleForm";
 import ArticleViewer from "@/app/components/ArticleViewer";
 import "@/app/article/write/page.scss";
-import { createArticle } from "../api";
+import { createArticle } from "@/app/api";
 import { useRouter } from "next/navigation";
 
 export default function ArticleWritePage() {

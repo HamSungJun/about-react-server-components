@@ -1,0 +1,15 @@
+.article-list-item {
+  padding: 20px;
+  background-color: #d4d4d8;
+  border-radius: 4px;
+  box-shadow: 0 2px 2px #a1a1aa;
+  &:not(:last-child) {
+    margin-bottom: 20px;
+  }
+  .article-title {
+    margin-bottom: 20px;
+    .article-title-link {
+      text-decoration: underline;
+    }
+  }
+}
