@@ -145,6 +145,32 @@ export default function ArticleListItem({ id, title, createdAt }: Props) {
 // "use client";
 ```
 
+이번 작업으로 관찰해본 변화는 아래와 같다.
+
+클라이언트에서 전송하는 요청의 개수와 트래픽 용량이 줄어든다.
+
+| before                                                                  | after                                                                 |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| ![traffic-before](./screenshots/client-to-server-01-before-traffic.png) | ![traffic-after](./screenshots/client-to-server-01-after-traffic.png) |
+
+클라이언트에서 `ArticleList`, `ArticleListItem` 컴포넌트 스크립트를 불러올 필요가 없다. 서버에서 HTML로 렌더링하고 끝이다.
+
+| before                                                                | after                                                               |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| ![source-before](./screenshots/client-to-server-01-before-source.png) | ![source-after](./screenshots/client-to-server-01-after-source.png) |
+
+`ArticleListItem` 컴포넌트에서 사용하던 `dayjs` 모듈은 서버상에서만 필요한 모듈이 되었으므로 클라이언트에서 로드하지 않는다.
+
+| before                                                                | after                                                               |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| ![module-before](./screenshots/client-to-server-01-before-module.png) | ![module-after](./screenshots/client-to-server-01-after-module.png) |
+
+성능 지표의 전과 후를 비교할 수 있다.
+
+| before                                                                        | after                                                                       |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| ![lighthouse-before](./screenshots/client-to-server-01-before-lighthouse.png) | ![lighthouse-after](./screenshots/client-to-server-01-after-lighthouse.png) |
+
 ### References
 
 - https://ko.reactjs.org/blog/2020/12/21/data-fetching-with-react-server-components.html
