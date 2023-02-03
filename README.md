@@ -8,7 +8,7 @@
       - Fetch 이후 자식 컴포넌트 C1은 렌더링에 성공, ... 반복
         - 결과적으로 React Component Tree를 모두 렌더링하기 위해 Waterfall Rendering Model이 발생한다.
 
-위의 문제점을 개선하기 위해 GraphQL과 같은 솔루션으로 한번의 네트워크 라운드 트립에 특정 컴포넌트 트리를 렌더링 하기 위한 데이터를 모두 가져오는 대안을 선택할 수 있었다. 그러나 부모 컴포넌트 하위의 자식 컴포넌트의 독립성은 저해될 수 있다.  
+위의 문제점을 개선하기 위해 GraphQL과 같은 솔루션으로 한번의 네트워크 라운드 트립에 특정 컴포넌트 트리를 렌더링 하기 위한 데이터를 모두 가져오는 대안을 선택할 수 있었다. 그러나 부모 컴포넌트 하위의 자식 컴포넌트의 독립성은 저해될 수 있다.
 
 그렇다면 모든 프로젝트에 GraphQL 솔루션을 반드시 적용해야만 하는가?
 
@@ -59,6 +59,92 @@ React Server Components, 앞으로는 RSC라고 하자. Nextjs 13 베타버전�
     - 게시글 수정 페이지
     - 게시글 상세 페이지
 ```
+
+[2023-02-04]
+
+기본적인 블로그 구현을 마치고 홈 페이지에서 사용되는 컴포넌트를 client 에서 server only 컴포넌트로 이전했다.
+
+- ArticleList.tsx
+- ArticleListItem.tsx
+
+먼저 `ArticleList`를 server only 컴포넌트로 변경해보자. 컴포넌트에 있는 `use client` 디렉티브를 제거한다. 이제 프레임워크는 이 컴포넌트를 server only 컴포넌트로 취급한다. 그러나 상태관리 훅이 server only 컴포넌트로 전환하는데에 문제가 된다. 클라이언트에서 Fetch 하여 리스트를 렌더링하는 로직을 제거한 다음, Server Component 에서는 함수 컴포넌트 선언을 async로 작성할 수 있기 때문에 Data Fetching에 대해서 별도의 상태관리 훅 없이 진행할 수 있다.
+
+```tsx
+// before
+export default function ArticleList() {
+  const [articles, setArticles] = useState([]);
+
+  useEffect(() => {
+    fetchArticles().then((articles) => {
+      setArticles(articles);
+    });
+  });
+
+  return articles.length > 0 ? (
+    <div>
+      {articles.map((article) => (
+        <ArticleListItem key={article.id} {...article} />
+      ))}
+    </div>
+  ) : null;
+}
+```
+
+서버에서 Data Fetching의 완료를 기다린 후 리스트를 렌더링한 HTML을 응답한다.
+
+```tsx
+//after
+export default async function ArticleList() {
+  const articles = await fetchArticles();
+  return articles.length > 0 ? (
+    <div>
+      {articles.map((article) => (
+        <ArticleListItem key={article.id} {...article} />
+      ))}
+    </div>
+  ) : null;
+}
+```
+
+다음은 `ArticleListItem` 컴포넌트를 전환해보자. 마찬가지로 `use client` 디렉티브를 제거한다. 이 컴포넌트는 별도의 상태관리 훅이 없어서 server only 컴포넌트로 전환하기 알맞다. 추가로 timestamp 포맷을 위해 `dayjs` 모듈을 사용하고 있는 것을 확인할 수 있는데 이 전환을 통해 클라이언트로 전송되는 번들 스크립트 감소의 효과를 갖게된다.
+
+```ts
+// before
+"use client";
+
+import Link from "next/link";
+import type { Article } from "@/app";
+import "@/app/components/ArticleListItem/index.scss";
+import dayjs from "dayjs";
+import relateveTimePlugin from "dayjs/plugin/relativeTime";
+import utcPlugin from "dayjs/plugin/utc";
+
+dayjs.extend(utcPlugin);
+dayjs.extend(relateveTimePlugin);
+
+interface Props extends Omit<Article, "content"> {}
+
+export default function ArticleListItem({ id, title, createdAt }: Props) {
+  return (
+    <div className="article-list-item">
+      <h2 className="article-title">
+        <Link className="article-title-link" href={`/article/read/${id}`}>
+          {title}
+        </Link>
+      </h2>
+      <div>
+        <span>{dayjs(createdAt).utc().fromNow()}</span>
+      </div>
+    </div>
+  );
+}
+```
+
+```ts
+// after
+// "use client";
+```
+
 ### References
 
 - https://ko.reactjs.org/blog/2020/12/21/data-fetching-with-react-server-components.html

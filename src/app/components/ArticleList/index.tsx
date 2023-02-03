@@ -1,17 +1,13 @@
-"use client";
+/**
+ * "use client";
+ * 서버 컴포넌트에서는 컴포넌트 함수를 async로 선언이 가능해집니다.
+ */
 
-import { useState, useEffect } from "react";
 import { fetchArticles } from "@/app/api";
 import ArticleListItem from "@/app/components/ArticleListItem";
-import type { Article } from "@/app";
 
-export default function ArticleList() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  useEffect(() => {
-    fetchArticles().then((articles) => {
-      setArticles(articles);
-    });
-  }, []);
+export default async function ArticleList() {
+  const articles = await fetchArticles();
   return articles.length > 0 ? (
     <div>
       {articles.map((article) => (
