@@ -60,7 +60,7 @@ React Server Components, 앞으로는 RSC라고 하자. Nextjs 13 베타버전�
     - 게시글 상세 페이지
 ```
 
-[2023-02-04]
+[2023-02-04, `client-to-server-01`]
 
 기본적인 블로그 구현을 마치고 홈 페이지에서 사용되는 컴포넌트를 client 에서 server only 컴포넌트로 이전했다.
 
@@ -170,6 +170,28 @@ export default function ArticleListItem({ id, title, createdAt }: Props) {
 | before                                                                        | after                                                                       |
 | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | ![lighthouse-before](./screenshots/client-to-server-01-before-lighthouse.png) | ![lighthouse-after](./screenshots/client-to-server-01-after-lighthouse.png) |
+
+[2023-02-06, `client-to-server-02`]
+
+RSC로 전환했을 때의 동작의 변화는 확인이 되었다. 궁금한 케이스가 생겼는데
+
+Parent > Child.1 > Child.2 과 같은 형태에서 중간중간 Client, Server Component 가 섞여 있으면 어떻게 될까?
+
+렌더링 되는 트리의 형태는 개발자가 어플리케이션을 구현하는 형태에 따라 매우 다양하기 때문에 모든 경우의 수를 짚어볼 수는 없다.
+
+하지만 바람직한 방향을 제시할 수는 있다. 다음을 살펴보자.
+
+최상위 컴포넌트 Parent가 Client 컴포넌트인 경우 Child.1, Child.2가 Server 컴포넌트여도 스크립트를 로드하게 된다.
+
+![client-parent](./screenshots/client-to-server-02-client-parent.png)
+
+Parent를 Server 컴포넌트로 두고 Child.1을 Client 컴포넌트로 지정하는 경우 Child.2가 Server 컴포넌트여도 스크립트를 로드하게 된다.
+
+![client-parent](./screenshots/client-to-server-02-client-child.1.png)
+
+즉 "use client" 디렉티브를 통해 지정된 클라이언트 컴포넌트가 리액트 렌더링 트리상에 루트에 가깝게 위치할 수록 RSC로 전환하는 이점을 잃어버리게 된다.
+
+Next.js 공식 문서상에서도 이런 부분을 감안해서인지 인터렉션이 필요한 [client 컴포넌트를 트리상의 Leaf에 최대한 위치시킬 것](https://beta.nextjs.org/docs/rendering/server-and-client-components#moving-client-components-to-the-leaves)을 권장하고 있다. (그래야만 루트부터 나머지 서브트리까지는 RSC의 이점을 누릴 수 있으므로.)
 
 ### References
 
